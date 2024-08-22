@@ -49,7 +49,7 @@ public class Todo {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "todo", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<UserTodo> userTodoList = new ArrayList<>();
 
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

@@ -23,7 +23,7 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<UserTodo> userTodoList = new ArrayList<>();
 
     public User(UserRequestDto requestDto) {
@@ -31,5 +31,17 @@ public class User {
         this.email = requestDto.getEmail();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = createdAt;
+    }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changeEmail(String email) {
+        this.email = email;
+    }
+
+    public void changeUpdatedAt() {
+        this.updatedAt = LocalDateTime.now();
     }
 }

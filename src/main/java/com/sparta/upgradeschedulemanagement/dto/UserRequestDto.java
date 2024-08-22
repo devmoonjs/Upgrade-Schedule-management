@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 @Getter
 public class UserRequestDto {
-    private String email;
     private String name;
+    private String email;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

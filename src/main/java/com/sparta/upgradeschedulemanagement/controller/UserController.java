@@ -7,10 +7,7 @@ import com.sparta.upgradeschedulemanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -33,4 +30,24 @@ public class UserController {
         userService.registerUser(requestDto);
         return ResponseEntity.ok().build();
     }
+
+    // 유저 조회
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable Long userId) {
+        return ResponseEntity.ok().body(UserResponseDto.of(userService.findById(userId)));
+    }
+
+    // 유저 정보 수정
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserRequestDto requestDto) {
+        return ResponseEntity.ok().body(userService.updateUser(userId, requestDto));
+    }
+
+    // 유저 삭제
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -47,4 +47,20 @@ public class UserService {
         userTodo.setTodo(todo);
         userTodoRepository.save(userTodo);
     }
+
+    public UserResponseDto updateUser(Long userId, UserRequestDto requestDto) {
+        User user = findById(userId);
+
+        if (requestDto.getName() != null) user.changeName(requestDto.getName());
+        if (requestDto.getEmail() != null) user.changeEmail(requestDto.getEmail());
+        user.changeUpdatedAt();
+
+        userRepository.save(user);
+        return UserResponseDto.of(user);
+    }
+
+    public void deleteUser(Long userId) {
+        User user = findById(userId);
+        userRepository.delete(user);
+    }
 }
