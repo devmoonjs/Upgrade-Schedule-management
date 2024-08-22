@@ -49,6 +49,6 @@ public class Todo {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "todo")
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 }

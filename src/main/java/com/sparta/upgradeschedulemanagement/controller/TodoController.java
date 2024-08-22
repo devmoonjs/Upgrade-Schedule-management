@@ -48,4 +48,11 @@ public class TodoController {
         TodoResponseDto responseDto = todoService.updateTodo(todoId, requestDto);
         return ResponseEntity.ok().body(responseDto);
     }
+
+    // 일정 삭제
+    @DeleteMapping("/todos/{todoId}")
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long todoId) {
+        todoService.deleteTodo(todoId);
+        return ResponseEntity.ok().build();
+    }
 }

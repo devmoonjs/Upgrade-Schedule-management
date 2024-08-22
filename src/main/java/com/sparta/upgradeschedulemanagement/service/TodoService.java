@@ -61,4 +61,9 @@ public class TodoService {
                 () -> new IllegalArgumentException("존재하지 않은 일정입니다.")
         );
     }
+
+    public void deleteTodo(Long todoId) {
+        Todo todo = findTodoById(todoId);
+        todoRepository.delete(todo);
+    }
 }
