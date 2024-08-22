@@ -53,7 +53,7 @@ public class CommentService {
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
         Comment comment = findCommentById(commentId);
 
-        if (requestDto.getAuthor() != null) comment.changeAuthor(requestDto.getAuthor());
+        if (requestDto.getUserId() != null) comment.changeUser(requestDto.getUserId());
         if (requestDto.getContent() != null) comment.changeContent(requestDto.getContent());
         comment.changeUpdatedAt();
 

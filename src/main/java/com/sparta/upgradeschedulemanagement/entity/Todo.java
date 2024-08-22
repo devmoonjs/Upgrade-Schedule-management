@@ -19,22 +19,22 @@ public class Todo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long todoId;
 
-    private String author;
+    private Long userId;
     private String title;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public Todo(TodoRequestDto requestDto) {
-        this.author = requestDto.getAuthor();
+        this.userId = requestDto.getUserId();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void changeAuthor(String author) {
-        this.author = author;
+    public void changeUserId(Long userId) {
+        this.userId = userId;
     }
 
     public void changeTitle(String title) {
@@ -49,6 +49,9 @@ public class Todo {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "todo", fetch = FetchType.LAZY)
+    private List<UserTodo> userTodoList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> commentList = new ArrayList<>();
 }

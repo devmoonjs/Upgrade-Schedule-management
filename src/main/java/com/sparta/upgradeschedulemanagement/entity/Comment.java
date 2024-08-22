@@ -17,7 +17,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
-    private String author;
+    private Long userId;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -28,14 +28,14 @@ public class Comment {
     private Todo todo;
 
     public Comment(CommentRequestDto requestDto) {
-        this.author = requestDto.getAuthor();
+        this.userId = requestDto.getUserId();
         this.content = requestDto.getContent();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void changeAuthor(String author) {
-        this.author = author;
+    public void changeUser(Long userId) {
+        this.userId = userId;
     }
 
     public void changeContent(String content) {

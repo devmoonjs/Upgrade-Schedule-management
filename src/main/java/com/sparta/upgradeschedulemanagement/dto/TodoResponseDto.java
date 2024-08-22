@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class TodoResponseDto {
     private final Long todoId;
-    private final String author;
+    private final Long userId;
     private final String title;
     private final String content;
     private final LocalDateTime createdAt;
@@ -19,7 +19,7 @@ public class TodoResponseDto {
     public static TodoResponseDto of(Todo todo) {
         return new TodoResponseDto(
                 todo.getTodoId(),
-                todo.getAuthor(),
+                todo.getUserId(),
                 todo.getTitle(),
                 todo.getContent(),
                 todo.getCreatedAt(),

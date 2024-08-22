@@ -4,7 +4,6 @@ import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoResponseDto;
 import com.sparta.upgradeschedulemanagement.service.TodoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;

@@ -3,6 +3,7 @@ package com.sparta.upgradeschedulemanagement.service;
 import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoResponseDto;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
+import com.sparta.upgradeschedulemanagement.entity.User;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +22,16 @@ import java.util.List;
 public class TodoService {
 
     private final TodoRepository todoRepository;
+    private final UserService userService;
 
     // 일정 생성
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
-        Todo todo = new Todo(requestDto);
-        return TodoResponseDto.of(todoRepository.save(todo));
+        User user = userService.findById(requestDto.getUserId());
+        if (user != null) {
+            Todo todo = new Todo(requestDto);
+            return TodoResponseDto.of(todoRepository.save(todo));
+        }
+        throw new RuntimeException();
     }
 
     // 일정 단건 조회
@@ -47,7 +53,7 @@ public class TodoService {
     // 일정 수정
     public TodoResponseDto updateTodo(Long todoId, TodoRequestDto requestDto) {
         Todo todo = findTodoById(todoId);
-        if (requestDto.getAuthor() != null) todo.changeAuthor(requestDto.getAuthor());
+        if (requestDto.getUserId() != null) todo.changeUserId(requestDto.getUserId());
         if (requestDto.getTitle() != null) todo.changeTitle(requestDto.getTitle());
         if (requestDto.getContent() != null) todo.changContent(requestDto.getContent());
         todo.changeUpdateAt();
@@ -62,6 +68,7 @@ public class TodoService {
         );
     }
 
+    // 일정 삭제
     public void deleteTodo(Long todoId) {
         Todo todo = findTodoById(todoId);
         todoRepository.delete(todo);
