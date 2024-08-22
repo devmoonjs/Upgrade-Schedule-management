@@ -6,7 +6,13 @@ import com.sparta.upgradeschedulemanagement.entity.Todo;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Transactional
@@ -16,16 +22,29 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
 
+    // 일정 생성
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
         Todo todo = new Todo(requestDto);
         return TodoResponseDto.of(todoRepository.save(todo));
     }
 
+    // 일정 단건 조회
     public TodoResponseDto getTodo(Long todoId) {
         return TodoResponseDto.of(findTodoById(todoId));
     }
 
+    // 일정 전체 조회
+    public List<TodoResponseDto> getTodoList(Pageable pageable) {
+        Page<Todo> todoValue = todoRepository.findAll(pageable);
+        List<TodoResponseDto> todoList = new ArrayList<>();
 
+        for (Todo todo : todoValue) {
+            todoList.add(TodoResponseDto.of(todo));
+        }
+        return todoList;
+    }
+
+    // 일정 수정
     public TodoResponseDto updateTodo(Long todoId, TodoRequestDto requestDto) {
         Todo todo = findTodoById(todoId);
         if (requestDto.getAuthor() != null) todo.changeAuthor(requestDto.getAuthor());
@@ -36,6 +55,7 @@ public class TodoService {
         return TodoResponseDto.of(todo);
     }
 
+    // 일정 존재 유뮤 체크
     public Todo findTodoById(Long todoId) {
         return todoRepository.findById(todoId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않은 일정입니다.")
