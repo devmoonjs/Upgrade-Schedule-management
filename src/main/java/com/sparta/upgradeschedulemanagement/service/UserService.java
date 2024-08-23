@@ -1,14 +1,17 @@
 package com.sparta.upgradeschedulemanagement.service;
 
+import com.sparta.upgradeschedulemanagement.config.PasswordEncoder;
 import com.sparta.upgradeschedulemanagement.dto.RegisterUserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
 import com.sparta.upgradeschedulemanagement.entity.User;
 import com.sparta.upgradeschedulemanagement.entity.UserTodo;
+import com.sparta.upgradeschedulemanagement.jwt.JwtUtil;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserTodoRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +26,32 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserTodoRepository userTodoRepository;
     private final TodoRepository todoRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
 
     // 유저 생성
-    public UserResponseDto createUser(UserRequestDto requestDto) {
+    public UserResponseDto createUser(UserRequestDto requestDto, HttpServletResponse res) {
+        // 유저 중복 체크
+        String name = requestDto.getName();
+        if(userRepository.findByName(name).isPresent()){
+            throw new IllegalArgumentException("중복된 유저가 존재합니다.");
+        };
+
+        // email 중복 체크
+        String email = requestDto.getName();
+        if(userRepository.findByEmail(email).isPresent()){
+            throw new IllegalArgumentException("중복된 이메일입니다.");
+        };
+
+        // 비밀번호 인코딩
+        String password = passwordEncoder.encode(requestDto.getPassword());
+        requestDto.setPassWord(password);
+
+        // JWT 생성
+        String token = jwtUtil.createToken(name);
+        jwtUtil.addJwtToCookie(token,res);
+
         User user = new User(requestDto);
         return UserResponseDto.of(userRepository.save(user));
     }

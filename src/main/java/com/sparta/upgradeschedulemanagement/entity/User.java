@@ -17,8 +17,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-
     private String name;
+    private String password;
     private String email;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -28,6 +28,7 @@ public class User {
 
     public User(UserRequestDto requestDto) {
         this.name = requestDto.getName();
+        this.password = requestDto.getPassword();
         this.email = requestDto.getEmail();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = createdAt;

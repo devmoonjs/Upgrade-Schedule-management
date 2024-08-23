@@ -4,6 +4,7 @@ import com.sparta.upgradeschedulemanagement.dto.RegisterUserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
 import com.sparta.upgradeschedulemanagement.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,12 @@ public class UserController {
 
     // 유저 생성
     @PostMapping("/users")
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto requestDto) {
-        UserResponseDto responseDto = userService.createUser(requestDto);
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto requestDto, HttpServletResponse res) {
+        UserResponseDto responseDto = userService.createUser(requestDto, res);
         return ResponseEntity.ok().body(responseDto);
     }
 
-    // 담당자 등록
+    // 담당자 등록 -> 유저로 이동
     @PostMapping("/register-users")
     public ResponseEntity<Void> registerUser(@RequestBody RegisterUserRequestDto requestDto) {
         userService.registerUser(requestDto);
