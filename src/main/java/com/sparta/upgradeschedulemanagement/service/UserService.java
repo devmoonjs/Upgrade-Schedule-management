@@ -62,16 +62,6 @@ public class UserService {
                 () -> new IllegalArgumentException("존재하지 않은 담당자 입니다."));
     }
 
-    // 유저 등록
-    public void registerUser(RegisterUserRequestDto requestDto) {
-        User user = findById(requestDto.getUserId()); // 유저 체크
-        Todo todo = todoRepository.findById(requestDto.getTodoId()).orElseThrow();
-
-        UserTodo userTodo = new UserTodo();
-        userTodo.setUser(user);
-        userTodo.setTodo(todo);
-        userTodoRepository.save(userTodo);
-    }
 
     public UserResponseDto updateUser(Long userId, UserRequestDto requestDto) {
         User user = findById(userId);

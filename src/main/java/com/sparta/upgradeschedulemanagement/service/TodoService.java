@@ -27,8 +27,9 @@ public class TodoService {
 
     private final TodoRepository todoRepository;
     private final UserTodoRepository usertodoRepository;
-    private final UserService userService;
     private final UserRepository userRepository;
+    private final UserService userService;
+
 
     // 일정 생성
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
@@ -88,5 +89,17 @@ public class TodoService {
     public void deleteTodo(Long todoId) {
         Todo todo = findTodoById(todoId);
         todoRepository.delete(todo);
+    }
+
+
+    // 유저 등록
+    public void registerUser(RegisterUserRequestDto requestDto) {
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(); // 유저 체크
+        Todo todo = todoRepository.findById(requestDto.getTodoId()).orElseThrow(); // 일정 체크
+
+        UserTodo userTodo = new UserTodo();
+        userTodo.setUser(user);
+        userTodo.setTodo(todo);
+        usertodoRepository.save(userTodo);
     }
 }

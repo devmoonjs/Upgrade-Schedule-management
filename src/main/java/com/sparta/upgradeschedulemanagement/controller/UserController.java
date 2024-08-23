@@ -25,13 +25,6 @@ public class UserController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    // 담당자 등록 -> 유저로 이동
-    @PostMapping("/register-users")
-    public ResponseEntity<Void> registerUser(@RequestBody RegisterUserRequestDto requestDto) {
-        userService.registerUser(requestDto);
-        return ResponseEntity.ok().build();
-    }
-
     // 유저 조회
     @GetMapping("/users/{userId}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable Long userId) {

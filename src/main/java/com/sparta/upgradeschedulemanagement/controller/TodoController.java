@@ -1,5 +1,6 @@
 package com.sparta.upgradeschedulemanagement.controller;
 
+import com.sparta.upgradeschedulemanagement.dto.RegisterUserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoInfoResponseDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoResponseDto;
@@ -53,6 +54,13 @@ public class TodoController {
     @DeleteMapping("/todos/{todoId}")
     public ResponseEntity<Void> deleteTodo(@PathVariable Long todoId) {
         todoService.deleteTodo(todoId);
+        return ResponseEntity.ok().build();
+    }
+
+    // 담당자 등록
+    @PostMapping("/todos/register-user")
+    public ResponseEntity<Void> registerUser(@RequestBody RegisterUserRequestDto requestDto) {
+        todoService.registerUser(requestDto);
         return ResponseEntity.ok().build();
     }
 }
