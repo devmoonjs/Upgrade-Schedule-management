@@ -1,28 +1,37 @@
 package com.sparta.upgradeschedulemanagement.service;
 
+import com.sparta.upgradeschedulemanagement.dto.TodoInfoResponseDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoResponseDto;
+import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
 import com.sparta.upgradeschedulemanagement.entity.User;
+import com.sparta.upgradeschedulemanagement.entity.UserTodo;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
+import com.sparta.upgradeschedulemanagement.repository.UserRepository;
+import com.sparta.upgradeschedulemanagement.repository.UserTodoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class TodoService {
 
     private final TodoRepository todoRepository;
+    private final UserTodoRepository usertodoRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     // 일정 생성
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
@@ -35,8 +44,19 @@ public class TodoService {
     }
 
     // 일정 단건 조회
-    public TodoResponseDto getTodo(Long todoId) {
-        return TodoResponseDto.of(findTodoById(todoId));
+    public TodoInfoResponseDto getTodo(Long todoId) {
+        List<UserTodo> testList = usertodoRepository.findUserTodosByTodoId(todoId);
+
+        List<UserResponseDto> responseDtos = testList.stream().map(it ->
+                UserResponseDto.of(it.getUser())).toList();
+
+        TodoInfoResponseDto testDto = TodoInfoResponseDto.builder()
+                .title(testList.get(0).getTodo().getTitle())
+                .content(testList.get(0).getTodo().getContent())
+                .users(responseDtos)
+                .build();
+
+        return testDto;
     }
 
     // 일정 전체 조회

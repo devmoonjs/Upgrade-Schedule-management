@@ -1,7 +1,9 @@
 package com.sparta.upgradeschedulemanagement.controller;
 
+import com.sparta.upgradeschedulemanagement.dto.TodoInfoResponseDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoResponseDto;
+import com.sparta.upgradeschedulemanagement.entity.UserTodo;
 import com.sparta.upgradeschedulemanagement.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +28,10 @@ public class TodoController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    // 일정 단건 조회
+    // 일정 단건 조회 + 담당자 정보 추가
     @GetMapping("/todos/{todoId}")
-    public ResponseEntity<TodoResponseDto> getTodo(@PathVariable Long todoId) {
-        TodoResponseDto responseDto = todoService.getTodo(todoId);
-        return ResponseEntity.ok().body(responseDto);
+    public ResponseEntity<TodoInfoResponseDto> getTodo(@PathVariable Long todoId) {
+        return ResponseEntity.ok().body(todoService.getTodo(todoId));
     }
 
     // 일정 전체 조회
