@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -33,6 +34,7 @@ public class JwtUtil {
 
     // Token 만료 시간
     public static final Long TOKEN_TIME = 60 * 60 * 1000L;
+    private final HttpServletResponse httpServletResponse;
 
     @Value("${jwt.secret.key}")
     private String secreteKey;
@@ -42,6 +44,10 @@ public class JwtUtil {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
+
+    public JwtUtil(HttpServletResponse httpServletResponse) {
+        this.httpServletResponse = httpServletResponse;
+    }
 
     @PostConstruct
     public void init() {
@@ -85,10 +91,13 @@ public class JwtUtil {
             logger.error("유효하지 않은 JWT");
         } catch (ExpiredJwtException e) {
             logger.error("만료된 토큰");
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (UnsupportedJwtException e) {
             logger.error("지원되지 않는 토큰");
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (IllegalArgumentException e) {
             logger.error("잘못된 토큰");
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         return false;
     }
@@ -114,8 +123,7 @@ public class JwtUtil {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
-        logger.error("토큰이 없습니다.");
-        throw new NullPointerException("토큰이 없습니다.");
+        return null; // 토큰이 없을 경우
     }
 
     public Claims getUserInfoFromToken(String token) {

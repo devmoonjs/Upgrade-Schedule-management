@@ -6,9 +6,11 @@ import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,6 +23,7 @@ public class AuthFilter implements Filter {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final HttpServletResponse httpServletResponse;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -37,9 +40,17 @@ public class AuthFilter implements Filter {
             if (StringUtils.hasText(tokenValue)) {
                 String token = jwtUtil.subStringToken(tokenValue);
 
+                if (token.isEmpty()) {
+                    httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    httpServletResponse.getWriter().write("토큰이 없습니다.");
+                    httpServletResponse.flushBuffer();
+                    return;
+                }
                 // 토큰 검증
                 if (!jwtUtil.validateToken(token)) {
-                    throw new IllegalArgumentException("토큰 에러");
+                    httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    httpServletResponse.flushBuffer();
+                    return;
                 }
 
                 Claims info = jwtUtil.getUserInfoFromToken(token);
@@ -50,7 +61,8 @@ public class AuthFilter implements Filter {
                 servletRequest.setAttribute("user", user);
                 filterChain.doFilter(servletRequest, servletResponse);
             } else {
-                throw new IllegalArgumentException("토큰을 찾을 수 없습니다.");
+                httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                httpServletResponse.flushBuffer();
             }
         }
     }

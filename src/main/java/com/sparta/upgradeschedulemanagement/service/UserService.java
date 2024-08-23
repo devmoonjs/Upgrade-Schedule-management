@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -81,7 +82,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public void login(LoginRequestDto requestDto, HttpServletResponse servletResponse) {
+    public ResponseEntity login(LoginRequestDto requestDto, HttpServletResponse servletResponse) {
         String name = requestDto.getName();
         String password = requestDto.getPassword();
 
@@ -92,11 +93,12 @@ public class UserService {
 
         // 비밀번호 확인
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+            return ResponseEntity.status(401).body("비밀번호가 틀렸습니다.");
         }
 
         // 로그인 완료 시
         String token = jwtUtil.createToken(user.getName());
         jwtUtil.addJwtToCookie(token, servletResponse);
+        return ResponseEntity.ok().build();
     }
 }
