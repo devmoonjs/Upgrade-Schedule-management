@@ -1,9 +1,6 @@
 package com.sparta.upgradeschedulemanagement.service;
 
-import com.sparta.upgradeschedulemanagement.dto.TodoInfoResponseDto;
-import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
-import com.sparta.upgradeschedulemanagement.dto.TodoResponseDto;
-import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
+import com.sparta.upgradeschedulemanagement.dto.*;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
 import com.sparta.upgradeschedulemanagement.entity.User;
 import com.sparta.upgradeschedulemanagement.entity.UserTodo;
@@ -45,18 +42,17 @@ public class TodoService {
 
     // 일정 단건 조회
     public TodoInfoResponseDto getTodo(Long todoId) {
-        List<UserTodo> testList = usertodoRepository.findUserTodosByTodoId(todoId);
+        Todo todo = todoRepository.findById(todoId).orElseThrow();
+        List<UserTodo> userTodoList = usertodoRepository.findUserTodosByTodo(todo);
 
-        List<UserResponseDto> responseDtos = testList.stream().map(it ->
-                UserResponseDto.of(it.getUser())).toList();
+        List<UserInfoDto> responseDtos = userTodoList.stream().map(it ->
+                UserInfoDto.of(it.getUser())).toList();
 
-        TodoInfoResponseDto testDto = TodoInfoResponseDto.builder()
-                .title(testList.get(0).getTodo().getTitle())
-                .content(testList.get(0).getTodo().getContent())
+        return TodoInfoResponseDto.builder()
+                .title(userTodoList.get(0).getTodo().getTitle())
+                .content(userTodoList.get(0).getTodo().getContent())
                 .users(responseDtos)
                 .build();
-
-        return testDto;
     }
 
     // 일정 전체 조회

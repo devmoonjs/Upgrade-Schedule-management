@@ -11,5 +11,5 @@ import java.util.List;
 public class TodoInfoResponseDto {
     private String title;
     private String content;
-    private List<UserResponseDto> users;
+    private List<UserInfoDto> users;
 }

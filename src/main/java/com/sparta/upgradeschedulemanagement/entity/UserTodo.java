@@ -13,12 +13,12 @@ public class UserTodo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userTodoId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Setter
     @JoinColumn(name = "todo_id")
     private Todo todo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Setter
     @JoinColumn(name = "user_id")
     private User user;
