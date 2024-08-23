@@ -1,9 +1,11 @@
 package com.sparta.upgradeschedulemanagement.controller;
 
+import com.sparta.upgradeschedulemanagement.dto.LoginRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.RegisterUserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
 import com.sparta.upgradeschedulemanagement.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,13 @@ public class UserController {
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto requestDto, HttpServletResponse res) {
         UserResponseDto responseDto = userService.createUser(requestDto, res);
         return ResponseEntity.ok().body(responseDto);
+    }
+
+    // 로그인
+    @PostMapping("/users/log-in")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse servletResponse) {
+        userService.login(requestDto, servletResponse);
+        return ResponseEntity.ok().body("로그인 완료");
     }
 
     // 유저 조회

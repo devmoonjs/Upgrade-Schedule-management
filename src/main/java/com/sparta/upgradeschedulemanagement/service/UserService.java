@@ -1,6 +1,7 @@
 package com.sparta.upgradeschedulemanagement.service;
 
 import com.sparta.upgradeschedulemanagement.config.PasswordEncoder;
+import com.sparta.upgradeschedulemanagement.dto.LoginRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.RegisterUserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
@@ -11,6 +12,7 @@ import com.sparta.upgradeschedulemanagement.jwt.JwtUtil;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserTodoRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +79,24 @@ public class UserService {
     public void deleteUser(Long userId) {
         User user = findById(userId);
         userRepository.delete(user);
+    }
+
+    public void login(LoginRequestDto requestDto, HttpServletResponse servletResponse) {
+        String name = requestDto.getName();
+        String password = requestDto.getPassword();
+
+        // 유저 확인
+        User user = userRepository.findByName(name).orElseThrow(
+                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+        );
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+        }
+
+        // 로그인 완료 시
+        String token = jwtUtil.createToken(user.getName());
+        jwtUtil.addJwtToCookie(token, servletResponse);
     }
 }
