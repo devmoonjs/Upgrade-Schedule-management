@@ -7,6 +7,7 @@ import com.sparta.upgradeschedulemanagement.dto.UserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
 import com.sparta.upgradeschedulemanagement.entity.User;
+import com.sparta.upgradeschedulemanagement.entity.UserRoleEnum;
 import com.sparta.upgradeschedulemanagement.entity.UserTodo;
 import com.sparta.upgradeschedulemanagement.jwt.JwtUtil;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
@@ -32,6 +33,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    // ADMIN TOKEN -> 일반 사용자인지 관리자인지 판별하기 위한 토큰
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+
 
     // 유저 생성
     public UserResponseDto createUser(UserRequestDto requestDto, HttpServletResponse res) {
@@ -52,10 +56,22 @@ public class UserService {
         requestDto.setPassWord(password);
 
         // JWT 생성
-        String token = jwtUtil.createToken(name);
+        UserRoleEnum role = UserRoleEnum.USER;
+        String requestKey = requestDto.getAdminKey();
+
+        // 만약 어드민 키가 들어왔다면 관리자로 지정
+        if (requestKey != null) {
+            if (!requestKey.equals(ADMIN_TOKEN)) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 등록할 수 없습니다.");
+            }
+            role = UserRoleEnum.ADMIN;
+        }
+
+        String token = jwtUtil.createToken(name,role);
         jwtUtil.addJwtToCookie(token,res);
 
         User user = new User(requestDto);
+        user.setRole(role);
         return UserResponseDto.of(userRepository.save(user));
     }
 
@@ -97,7 +113,7 @@ public class UserService {
         }
 
         // 로그인 완료 시
-        String token = jwtUtil.createToken(user.getName());
+        String token = jwtUtil.createToken(user.getName(), user.getRole());
         jwtUtil.addJwtToCookie(token, servletResponse);
         return ResponseEntity.ok().build();
     }

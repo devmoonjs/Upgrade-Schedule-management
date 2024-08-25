@@ -4,6 +4,7 @@ import com.sparta.upgradeschedulemanagement.dto.UserRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +23,10 @@ public class User {
     private String email;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @Setter
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<UserTodo> userTodoList = new ArrayList<>();
@@ -45,4 +50,5 @@ public class User {
     public void changeUpdatedAt() {
         this.updatedAt = LocalDateTime.now();
     }
+
 }

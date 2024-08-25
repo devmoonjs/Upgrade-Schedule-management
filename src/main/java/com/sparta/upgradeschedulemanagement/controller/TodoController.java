@@ -6,6 +6,8 @@ import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.TodoResponseDto;
 import com.sparta.upgradeschedulemanagement.entity.UserTodo;
 import com.sparta.upgradeschedulemanagement.service.TodoService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -45,15 +47,23 @@ public class TodoController {
 
     // 일정 수정
     @PutMapping("/todos/{todoId}")
-    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long todoId, @RequestBody TodoRequestDto requestDto) {
-        TodoResponseDto responseDto = todoService.updateTodo(todoId, requestDto);
+    public ResponseEntity<TodoResponseDto> updateTodo(
+            @PathVariable Long todoId,
+            @RequestBody TodoRequestDto requestDto,
+            HttpServletRequest httpServletRequest) {
+        TodoResponseDto responseDto = todoService.updateTodo(todoId, requestDto, httpServletRequest);
+        if (responseDto == null) {
+            return ResponseEntity.status(403).build();
+        }
         return ResponseEntity.ok().body(responseDto);
     }
 
     // 일정 삭제
     @DeleteMapping("/todos/{todoId}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable Long todoId) {
-        todoService.deleteTodo(todoId);
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long todoId, HttpServletRequest httpServletRequest) {
+        if(!todoService.deleteTodo(todoId, httpServletRequest)) {
+            return ResponseEntity.status(403).build();
+        }
         return ResponseEntity.ok().build();
     }
 

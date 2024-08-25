@@ -3,10 +3,15 @@ package com.sparta.upgradeschedulemanagement.service;
 import com.sparta.upgradeschedulemanagement.dto.*;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
 import com.sparta.upgradeschedulemanagement.entity.User;
+import com.sparta.upgradeschedulemanagement.entity.UserRoleEnum;
 import com.sparta.upgradeschedulemanagement.entity.UserTodo;
+import com.sparta.upgradeschedulemanagement.jwt.JwtUtil;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserTodoRepository;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +34,8 @@ public class TodoService {
     private final UserTodoRepository usertodoRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final HttpServletResponse httpServletResponse;
 
 
     // 일정 생성
@@ -68,7 +75,13 @@ public class TodoService {
     }
 
     // 일정 수정
-    public TodoResponseDto updateTodo(Long todoId, TodoRequestDto requestDto) {
+    public TodoResponseDto updateTodo(Long todoId, TodoRequestDto requestDto, HttpServletRequest httpServletRequest) {
+
+        // 관리자 체크
+        if(!validAdmin(httpServletRequest)) {
+            return null;
+        }
+
         Todo todo = findTodoById(todoId);
         if (requestDto.getUserId() != null) todo.changeUserId(requestDto.getUserId());
         if (requestDto.getTitle() != null) todo.changeTitle(requestDto.getTitle());
@@ -86,9 +99,14 @@ public class TodoService {
     }
 
     // 일정 삭제
-    public void deleteTodo(Long todoId) {
+    public boolean deleteTodo(Long todoId, HttpServletRequest httpServletRequest) {
+        // 관리자 체크
+        if(!validAdmin(httpServletRequest)) {
+            return false;
+        }
         Todo todo = findTodoById(todoId);
         todoRepository.delete(todo);
+        return true;
     }
 
 
@@ -101,5 +119,14 @@ public class TodoService {
         userTodo.setUser(user);
         userTodo.setTodo(todo);
         usertodoRepository.save(userTodo);
+    }
+
+    // 토큰 유저가 관리자인지 확인
+    public boolean validAdmin(HttpServletRequest httpServletRequest) {
+        String tokenValue = jwtUtil.getTokenFromRequest(httpServletRequest);
+        String token = jwtUtil.subStringToken(tokenValue);
+        Claims info = jwtUtil.getUserInfoFromToken(token);
+        User user = userRepository.findByName(info.getSubject()).orElseThrow();
+        return user.getRole().equals(UserRoleEnum.ADMIN);
     }
 }

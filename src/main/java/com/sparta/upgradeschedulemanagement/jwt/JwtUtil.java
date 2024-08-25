@@ -1,7 +1,6 @@
 package com.sparta.upgradeschedulemanagement.jwt;
 
-import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
-import com.sparta.upgradeschedulemanagement.service.UserService;
+import com.sparta.upgradeschedulemanagement.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -12,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +26,9 @@ public class JwtUtil {
 
     // Header Key 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
+
+    // 사용자 권한 값의 Key
+    public static final String AUTHORIZATION_KEY = "auth";
 
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
@@ -56,12 +57,13 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String name) {
+    public String createToken(String name, UserRoleEnum roleEnum) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(name) // 사용자 식별값
+                        .claim(AUTHORIZATION_KEY, roleEnum) // 사용자 권한 키 밸류
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm) // 암호화

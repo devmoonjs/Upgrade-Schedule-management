@@ -10,11 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import java.io.IOException;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -46,6 +45,7 @@ public class AuthFilter implements Filter {
                     httpServletResponse.flushBuffer();
                     return;
                 }
+
                 // 토큰 검증
                 if (!jwtUtil.validateToken(token)) {
                     httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
