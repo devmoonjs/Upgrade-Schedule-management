@@ -11,7 +11,6 @@ import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserTodoRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Transactional
@@ -35,8 +32,6 @@ public class TodoService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final JwtUtil jwtUtil;
-    private final HttpServletResponse httpServletResponse;
-
 
     // 일정 생성
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
@@ -76,7 +71,6 @@ public class TodoService {
 
     // 일정 수정
     public TodoResponseDto updateTodo(Long todoId, TodoRequestDto requestDto, HttpServletRequest httpServletRequest) {
-
         // 관리자 체크
         if(!validAdmin(httpServletRequest)) {
             return null;

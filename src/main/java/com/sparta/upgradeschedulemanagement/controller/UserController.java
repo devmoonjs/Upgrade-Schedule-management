@@ -1,11 +1,9 @@
 package com.sparta.upgradeschedulemanagement.controller;
 
 import com.sparta.upgradeschedulemanagement.dto.LoginRequestDto;
-import com.sparta.upgradeschedulemanagement.dto.RegisterUserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
 import com.sparta.upgradeschedulemanagement.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

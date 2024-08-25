@@ -2,18 +2,12 @@ package com.sparta.upgradeschedulemanagement.service;
 
 import com.sparta.upgradeschedulemanagement.config.PasswordEncoder;
 import com.sparta.upgradeschedulemanagement.dto.LoginRequestDto;
-import com.sparta.upgradeschedulemanagement.dto.RegisterUserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.UserResponseDto;
-import com.sparta.upgradeschedulemanagement.entity.Todo;
 import com.sparta.upgradeschedulemanagement.entity.User;
 import com.sparta.upgradeschedulemanagement.entity.UserRoleEnum;
-import com.sparta.upgradeschedulemanagement.entity.UserTodo;
 import com.sparta.upgradeschedulemanagement.jwt.JwtUtil;
-import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserRepository;
-import com.sparta.upgradeschedulemanagement.repository.UserTodoRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +22,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserTodoRepository userTodoRepository;
-    private final TodoRepository todoRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 

@@ -1,7 +1,5 @@
 package com.sparta.upgradeschedulemanagement.entity;
 
-import org.apache.tomcat.util.http.parser.Authorization;
-
 public enum UserRoleEnum {
 
     USER(Authority.USER),
