@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +34,21 @@ public class TodoService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final WeatherService weatherService;
 
     // 일정 생성
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
         User user = userService.findById(requestDto.getUserId());
         if (user != null) {
             Todo todo = new Todo(requestDto);
+
+            LocalDateTime dateTimeValue = todo.getCreatedAt();
+            DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM-dd");
+            String dateTime = dateTimeValue.format(dateTimeFormat);
+
+            String weather = weatherService.getWeatherData(dateTime);
+            todo.setWeather(weather);
+
             return TodoResponseDto.of(todoRepository.save(todo));
         }
         throw new RuntimeException();

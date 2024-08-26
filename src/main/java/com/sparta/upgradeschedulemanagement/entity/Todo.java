@@ -5,6 +5,7 @@ import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class Todo {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @Setter
+    private String weather;
 
     public Todo(TodoRequestDto requestDto) {
         this.userId = requestDto.getUserId();
