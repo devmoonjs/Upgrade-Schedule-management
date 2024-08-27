@@ -2,6 +2,7 @@ package com.sparta.upgradeschedulemanagement.entity;
 
 
 import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
+import com.sparta.upgradeschedulemanagement.dto.WeatherDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,16 +26,15 @@ public class Todo {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    @Setter
     private String weather;
 
-    public Todo(TodoRequestDto requestDto) {
+    public Todo(TodoRequestDto requestDto, String weather) {
         this.userId = requestDto.getUserId();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.weather = weather;
     }
 
     public void changeUserId(Long userId) {

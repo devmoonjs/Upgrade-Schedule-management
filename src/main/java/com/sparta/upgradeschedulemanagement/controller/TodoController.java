@@ -29,7 +29,7 @@ public class TodoController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    // 일정 단건 조회 + 담당자 정보 추가
+    // 일정 단건 조회
     @GetMapping("/todos/{todoId}")
     public ResponseEntity<TodoInfoResponseDto> getTodo(@PathVariable Long todoId) {
         return ResponseEntity.ok().body(todoService.getTodo(todoId));

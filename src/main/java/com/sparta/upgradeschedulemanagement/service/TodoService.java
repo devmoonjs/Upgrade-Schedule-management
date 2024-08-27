@@ -5,6 +5,7 @@ import com.sparta.upgradeschedulemanagement.entity.Todo;
 import com.sparta.upgradeschedulemanagement.entity.User;
 import com.sparta.upgradeschedulemanagement.entity.UserRoleEnum;
 import com.sparta.upgradeschedulemanagement.entity.UserTodo;
+import com.sparta.upgradeschedulemanagement.exception.EntityNotFoundException;
 import com.sparta.upgradeschedulemanagement.jwt.JwtUtil;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserRepository;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -40,23 +42,30 @@ public class TodoService {
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
         User user = userService.findById(requestDto.getUserId());
         if (user != null) {
-            Todo todo = new Todo(requestDto);
-
-            LocalDateTime dateTimeValue = todo.getCreatedAt();
-            DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM-dd");
-            String dateTime = dateTimeValue.format(dateTimeFormat);
+            LocalDate localDate = LocalDate.now();
+            String dateTime = getDateformat(localDate);
 
             String weather = weatherService.getWeatherData(dateTime);
-            todo.setWeather(weather);
 
+            Todo todo = new Todo(requestDto, weather);
             return TodoResponseDto.of(todoRepository.save(todo));
         }
         throw new RuntimeException();
     }
 
+    // 생성일 "MM-DD" 형태 변환
+    private static String getDateformat(LocalDate localDate) {
+        DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM-dd");
+        String dateTime = localDate.format(dateTimeFormat);
+        return dateTime;
+    }
+
     // 일정 단건 조회
     public TodoInfoResponseDto getTodo(Long todoId) {
-        Todo todo = todoRepository.findById(todoId).orElseThrow();
+        Todo todo = todoRepository.findById(todoId).orElseThrow(
+                () -> new EntityNotFoundException("일정을 찾을 수 없습니다.")
+        );
+
         List<UserTodo> userTodoList = usertodoRepository.findUserTodosByTodo(todo);
 
         List<UserInfoDto> responseDtos = userTodoList.stream().map(it ->
