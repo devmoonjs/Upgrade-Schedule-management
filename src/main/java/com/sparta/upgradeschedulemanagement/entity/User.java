@@ -24,17 +24,17 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Setter
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<UserTodo> userTodoList = new ArrayList<>();
 
-    public User(UserRequestDto requestDto) {
+    public User(UserRequestDto requestDto, String password, UserRoleEnum role) {
         this.name = requestDto.getName();
-        this.password = requestDto.getPassword();
+        this.password = password;
         this.email = requestDto.getEmail();
+        this.role = role;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = createdAt;
     }

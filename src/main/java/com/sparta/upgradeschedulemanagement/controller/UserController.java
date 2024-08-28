@@ -21,8 +21,7 @@ public class UserController {
     // 유저 생성
     @PostMapping("/users")
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto requestDto, HttpServletResponse res) {
-        UserResponseDto responseDto = userService.createUser(requestDto, res);
-        return ResponseEntity.ok().body(responseDto);
+        return ResponseEntity.ok().body(userService.createUser(requestDto, res));
     }
 
     // 로그인

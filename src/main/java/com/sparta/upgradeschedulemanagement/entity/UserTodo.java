@@ -14,12 +14,15 @@ public class UserTodo {
     Long userTodoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Setter
     @JoinColumn(name = "todo_id")
     private Todo todo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Setter
     @JoinColumn(name = "user_id")
     private User user;
+
+    public UserTodo(Todo todo, User user) {
+        this.todo = todo;
+        this.user = user;
+    }
 }

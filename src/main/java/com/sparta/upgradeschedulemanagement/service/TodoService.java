@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,14 +91,14 @@ public class TodoService {
     // 일정 수정
     public TodoResponseDto updateTodo(Long todoId, TodoRequestDto requestDto, HttpServletRequest httpServletRequest) {
         // 관리자 체크
-        if(!validAdmin(httpServletRequest)) {
-            return null;
-        }
+        validAdmin(httpServletRequest);
 
         Todo todo = findTodoById(todoId);
+
         if (requestDto.getUserId() != null) todo.changeUserId(requestDto.getUserId());
         if (requestDto.getTitle() != null) todo.changeTitle(requestDto.getTitle());
         if (requestDto.getContent() != null) todo.changContent(requestDto.getContent());
+
         todo.changeUpdateAt();
 
         return TodoResponseDto.of(todo);
@@ -108,39 +107,45 @@ public class TodoService {
     // 일정 존재 유뮤 체크
     public Todo findTodoById(Long todoId) {
         return todoRepository.findById(todoId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않은 일정입니다.")
+                () -> new EntityNotFoundException("존재하지 않은 일정입니다.")
         );
     }
 
     // 일정 삭제
-    public boolean deleteTodo(Long todoId, HttpServletRequest httpServletRequest) {
+    public void deleteTodo(Long todoId, HttpServletRequest httpServletRequest) {
         // 관리자 체크
-        if(!validAdmin(httpServletRequest)) {
-            return false;
-        }
+        validAdmin(httpServletRequest);
+
         Todo todo = findTodoById(todoId);
         todoRepository.delete(todo);
-        return true;
     }
 
-
     // 유저 등록
-    public void registerUser(RegisterUserRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(); // 유저 체크
-        Todo todo = todoRepository.findById(requestDto.getTodoId()).orElseThrow(); // 일정 체크
+    public void registerManager(RegisterManagerRequestDto requestDto) {
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(
+                () -> new EntityNotFoundException("존재하지 않는 사용자입니다.")
+        );
 
-        UserTodo userTodo = new UserTodo();
-        userTodo.setUser(user);
-        userTodo.setTodo(todo);
+        Todo todo = todoRepository.findById(requestDto.getTodoId()).orElseThrow(
+                () -> new EntityNotFoundException("존재하지 않는 일정입니다.")
+        );
+
+        UserTodo userTodo = new UserTodo(todo, user);
         usertodoRepository.save(userTodo);
     }
 
-    // 토큰 유저가 관리자인지 확인
-    public boolean validAdmin(HttpServletRequest httpServletRequest) {
+    // 관리자 확인
+    public void validAdmin(HttpServletRequest httpServletRequest) {
         String tokenValue = jwtUtil.getTokenFromRequest(httpServletRequest);
         String token = jwtUtil.subStringToken(tokenValue);
         Claims info = jwtUtil.getUserInfoFromToken(token);
-        User user = userRepository.findByName(info.getSubject()).orElseThrow();
-        return user.getRole().equals(UserRoleEnum.ADMIN);
+
+        User user = userRepository.findByName(info.getSubject()).orElseThrow(
+                () -> new EntityNotFoundException("존재하지 않는 사용자입니다.")
+        );
+
+        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new IllegalAccessError("수정 및 삭제 권한이 없습니다.");
+        }
     }
 }
