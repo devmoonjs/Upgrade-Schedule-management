@@ -12,14 +12,14 @@ import com.sparta.upgradeschedulemanagement.exception.AuthorizedException;
 import com.sparta.upgradeschedulemanagement.jwt.JwtUtil;
 import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
 
@@ -31,6 +31,7 @@ public class UserService {
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     // 유저 생성
+    @Transactional
     public UserResponseDto createUser(UserRequestDto requestDto, HttpServletResponse res) {
         // 유저 중복 체크
         String name = requestDto.getName();
@@ -73,6 +74,7 @@ public class UserService {
                 () -> new EntityNotFoundException("존재하지 않은 담당자 입니다."));
     }
 
+    @Transactional
     public UserResponseDto updateUser(Long userId, UserRequestDto requestDto) {
         User user = findById(userId);
 
@@ -84,6 +86,7 @@ public class UserService {
         return UserResponseDto.of(user);
     }
 
+    @Transactional
     public void deleteUser(Long userId) {
         User user = findById(userId);
         userRepository.delete(user);

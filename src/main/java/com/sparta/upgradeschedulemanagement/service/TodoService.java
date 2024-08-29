@@ -12,12 +12,12 @@ import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserTodoRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class TodoService {
@@ -38,6 +38,7 @@ public class TodoService {
     private final WeatherService weatherService;
 
     // 일정 생성
+    @Transactional
     public TodoResponseDto createTodo(TodoRequestDto requestDto) {
         User user = userService.findById(requestDto.getUserId());
         if (user != null) {
@@ -89,6 +90,7 @@ public class TodoService {
     }
 
     // 일정 수정
+    @Transactional
     public TodoResponseDto updateTodo(Long todoId, TodoRequestDto requestDto, HttpServletRequest httpServletRequest) {
         // 관리자 체크
         validAdmin(httpServletRequest);
@@ -112,6 +114,7 @@ public class TodoService {
     }
 
     // 일정 삭제
+    @Transactional
     public void deleteTodo(Long todoId, HttpServletRequest httpServletRequest) {
         // 관리자 체크
         validAdmin(httpServletRequest);
@@ -121,6 +124,7 @@ public class TodoService {
     }
 
     // 유저 등록
+    @Transactional
     public void registerManager(RegisterManagerRequestDto requestDto) {
         User user = userRepository.findById(requestDto.getUserId()).orElseThrow(
                 () -> new EntityNotFoundException("존재하지 않는 사용자입니다.")

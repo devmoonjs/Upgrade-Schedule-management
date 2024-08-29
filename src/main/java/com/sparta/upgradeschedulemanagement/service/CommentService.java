@@ -4,19 +4,19 @@ import com.sparta.upgradeschedulemanagement.dto.CommentRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.CommentResponseDto;
 import com.sparta.upgradeschedulemanagement.entity.Comment;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
-import com.sparta.upgradeschedulemanagement.entity.User;
 import com.sparta.upgradeschedulemanagement.exception.EntityNotFoundException;
 import com.sparta.upgradeschedulemanagement.repository.CommentRepository;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserRepository;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CommentService {
@@ -27,6 +27,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     // 댓글 생성
+    @Transactional
     public CommentResponseDto createComment(Long todoId, CommentRequestDto requestDto) {
         Todo todo = todoService.findTodoById(todoId);
 
@@ -57,6 +58,7 @@ public class CommentService {
     }
 
     // 댓글 수정
+    @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
         Comment comment = findCommentById(commentId);
 
@@ -68,6 +70,7 @@ public class CommentService {
     }
 
     // 댓글 삭제
+    @Transactional
     public void deleteComment(Long commentId) {
         Comment comment = findCommentById(commentId);
         commentRepository.delete(comment);
