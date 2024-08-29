@@ -16,7 +16,9 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
+
     private String name;
     private String password;
     private String email;
@@ -28,6 +30,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<UserTodo> userTodoList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList = new ArrayList<>();
 
     public User(UserRequestDto requestDto, String password, UserRoleEnum role) {
         this.name = requestDto.getName();

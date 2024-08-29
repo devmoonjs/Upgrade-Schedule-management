@@ -4,11 +4,15 @@ import com.sparta.upgradeschedulemanagement.dto.CommentRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.CommentResponseDto;
 import com.sparta.upgradeschedulemanagement.entity.Comment;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
+import com.sparta.upgradeschedulemanagement.entity.User;
 import com.sparta.upgradeschedulemanagement.exception.EntityNotFoundException;
+import com.sparta.upgradeschedulemanagement.jwt.JwtUtil;
 import com.sparta.upgradeschedulemanagement.repository.CommentRepository;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
 import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,17 +29,20 @@ public class CommentService {
     private final TodoRepository todoRepository;
     private final TodoService todoService;
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     // 댓글 생성
     @Transactional
-    public CommentResponseDto createComment(Long todoId, CommentRequestDto requestDto) {
+    public CommentResponseDto createComment(Long todoId, CommentRequestDto requestDto, HttpServletRequest httpServletRequest) {
         Todo todo = todoService.findTodoById(todoId);
 
-        userRepository.findById(requestDto.getUserId()).orElseThrow(
-                () -> new EntityNotFoundException("존재하지 않는 사용자입니다.")
-        );
+        String tokenValue = jwtUtil.getTokenFromRequest(httpServletRequest);
+        String token = jwtUtil.subStringToken(tokenValue);
+        Claims info = jwtUtil.getUserInfoFromToken(token);
 
-        Comment comment = new Comment(requestDto, todo);
+        User user = userRepository.findByName(info.getSubject()).orElseThrow();
+
+        Comment comment = new Comment(requestDto, user, todo);
         return CommentResponseDto.of(commentRepository.save(comment));
     }
 
@@ -62,7 +69,6 @@ public class CommentService {
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
         Comment comment = findCommentById(commentId);
 
-        if (requestDto.getUserId() != null) comment.changeUser(requestDto.getUserId());
         if (requestDto.getContent() != null) comment.changeContent(requestDto.getContent());
         comment.changeUpdatedAt();
 

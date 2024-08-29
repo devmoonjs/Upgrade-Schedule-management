@@ -3,6 +3,7 @@ package com.sparta.upgradeschedulemanagement.controller;
 import com.sparta.upgradeschedulemanagement.dto.CommentRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.CommentResponseDto;
 import com.sparta.upgradeschedulemanagement.service.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,8 @@ public class CommentController {
 
     // 댓글 생성
     @PostMapping("/comment/{todoId}")
-    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long todoId, @RequestBody CommentRequestDto requestDto) {
-        CommentResponseDto responseDto = commentService.createComment(todoId, requestDto);
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long todoId, @RequestBody CommentRequestDto requestDto, HttpServletRequest httpServletRequest) {
+        CommentResponseDto responseDto = commentService.createComment(todoId, requestDto, httpServletRequest);
         return ResponseEntity.ok().body(responseDto);
     }
 

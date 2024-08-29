@@ -17,25 +17,24 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_id")
     private Todo todo;
 
-    public Comment(CommentRequestDto requestDto, Todo todo) {
-        this.userId = requestDto.getUserId();
+    public Comment(CommentRequestDto requestDto, User user, Todo todo) {
+        this.user = user;
         this.content = requestDto.getContent();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.todo = todo;
-    }
-
-    public void changeUser(Long userId) {
-        this.userId = userId;
     }
 
     public void changeContent(String content) {
