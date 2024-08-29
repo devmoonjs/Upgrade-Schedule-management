@@ -22,16 +22,16 @@ public class Comment {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @Setter
     @ManyToOne
     @JoinColumn(name = "todo_id")
     private Todo todo;
 
-    public Comment(CommentRequestDto requestDto) {
+    public Comment(CommentRequestDto requestDto, Todo todo) {
         this.userId = requestDto.getUserId();
         this.content = requestDto.getContent();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.todo = todo;
     }
 
     public void changeUser(Long userId) {

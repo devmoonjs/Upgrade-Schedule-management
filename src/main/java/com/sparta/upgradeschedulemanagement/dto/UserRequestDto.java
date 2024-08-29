@@ -11,8 +11,4 @@ public class UserRequestDto {
     private String email;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public void setPassWord(String passWord) {
-        this.password = passWord;
-    }
 }

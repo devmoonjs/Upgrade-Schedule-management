@@ -26,6 +26,7 @@ public class TodoController {
     @PostMapping("/todos")
     public ResponseEntity<TodoResponseDto> createTodo(@RequestBody TodoRequestDto requestDto) {
         return ResponseEntity.ok().body(todoService.createTodo(requestDto));
+
     }
 
     // 일정 단건 조회

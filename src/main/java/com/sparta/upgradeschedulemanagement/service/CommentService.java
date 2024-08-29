@@ -4,8 +4,11 @@ import com.sparta.upgradeschedulemanagement.dto.CommentRequestDto;
 import com.sparta.upgradeschedulemanagement.dto.CommentResponseDto;
 import com.sparta.upgradeschedulemanagement.entity.Comment;
 import com.sparta.upgradeschedulemanagement.entity.Todo;
+import com.sparta.upgradeschedulemanagement.entity.User;
+import com.sparta.upgradeschedulemanagement.exception.EntityNotFoundException;
 import com.sparta.upgradeschedulemanagement.repository.CommentRepository;
 import com.sparta.upgradeschedulemanagement.repository.TodoRepository;
+import com.sparta.upgradeschedulemanagement.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,12 +24,17 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final TodoRepository todoRepository;
     private final TodoService todoService;
+    private final UserRepository userRepository;
 
     // 댓글 생성
     public CommentResponseDto createComment(Long todoId, CommentRequestDto requestDto) {
         Todo todo = todoService.findTodoById(todoId);
-        Comment comment = new Comment(requestDto);
-        comment.setTodo(todo);
+
+        userRepository.findById(requestDto.getUserId()).orElseThrow(
+                () -> new EntityNotFoundException("존재하지 않는 사용자입니다.")
+        );
+
+        Comment comment = new Comment(requestDto, todo);
         return CommentResponseDto.of(commentRepository.save(comment));
     }
 
@@ -68,7 +76,7 @@ public class CommentService {
     // 댓글 존재 유무 검사
     public Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 댓글입니다.")
+                () -> new EntityNotFoundException("존재하지 않는 댓글입니다.")
         );
     }
 }

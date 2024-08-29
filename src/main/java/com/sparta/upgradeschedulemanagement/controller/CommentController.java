@@ -33,15 +33,13 @@ public class CommentController {
     // 댓글 전체 조회
     @GetMapping("/comments/{todoId}")
     public ResponseEntity<List<CommentResponseDto>> getCommentList(@PathVariable Long todoId) {
-        List<CommentResponseDto> commentList = commentService.getCommentList(todoId);
-        return ResponseEntity.ok().body(commentList);
+        return ResponseEntity.ok().body(commentService.getCommentList(todoId));
     }
 
     // 댓글 수정
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto) {
-        CommentResponseDto responseDto = commentService.updateComment(commentId, requestDto);
-        return ResponseEntity.ok().body(responseDto);
+        return ResponseEntity.ok().body(commentService.updateComment(commentId, requestDto));
     }
 
     // 댓글 삭제
