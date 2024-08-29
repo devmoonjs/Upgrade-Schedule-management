@@ -1,21 +1,17 @@
 package com.sparta.upgradeschedulemanagement.entity;
 
-
 import com.sparta.upgradeschedulemanagement.dto.TodoRequestDto;
-import com.sparta.upgradeschedulemanagement.dto.WeatherDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Todo {
+public class Todo extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +20,12 @@ public class Todo {
     private Long userId;
     private String title;
     private String content;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private String weather;
 
     public Todo(TodoRequestDto requestDto, String weather) {
         this.userId = requestDto.getUserId();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
         this.weather = weather;
     }
 
@@ -47,10 +39,6 @@ public class Todo {
 
     public void changContent(String content) {
         this.content = content;
-    }
-
-    public void changeUpdateAt() {
-        this.updatedAt = LocalDateTime.now();
     }
 
     @OneToMany(mappedBy = "todo", cascade = CascadeType.REMOVE)

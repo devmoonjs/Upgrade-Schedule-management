@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor
-public class UserTodo {
+public class UserTodo extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userTodoId;

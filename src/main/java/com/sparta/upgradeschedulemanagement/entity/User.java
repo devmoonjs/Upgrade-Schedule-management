@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class User {
+public class User extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +22,6 @@ public class User {
     private String name;
     private String password;
     private String email;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
@@ -39,8 +37,6 @@ public class User {
         this.password = password;
         this.email = requestDto.getEmail();
         this.role = role;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = createdAt;
     }
 
     public void changeName(String name) {
@@ -50,9 +46,4 @@ public class User {
     public void changeEmail(String email) {
         this.email = email;
     }
-
-    public void changeUpdatedAt() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
 }

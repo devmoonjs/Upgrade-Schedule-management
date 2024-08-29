@@ -14,7 +14,7 @@ public class TodoResponseDto {
     private final String title;
     private final String content;
     private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private final LocalDateTime modifiedAt;
 
     public static TodoResponseDto of(Todo todo) {
         return new TodoResponseDto(
@@ -23,7 +23,7 @@ public class TodoResponseDto {
                 todo.getTitle(),
                 todo.getContent(),
                 todo.getCreatedAt(),
-                todo.getUpdatedAt()
+                todo.getModifiedAt()
         );
     }
 }

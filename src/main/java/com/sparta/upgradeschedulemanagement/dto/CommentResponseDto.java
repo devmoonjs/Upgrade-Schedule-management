@@ -20,7 +20,7 @@ public class CommentResponseDto {
                 comment.getCommentId(),
                 comment.getContent(),
                 comment.getCreatedAt(),
-                comment.getUpdatedAt(),
+                comment.getModifiedAt(),
                 comment.getTodo().getTodoId()
         );
     }

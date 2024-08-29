@@ -70,7 +70,6 @@ public class CommentService {
         Comment comment = findCommentById(commentId);
 
         if (requestDto.getContent() != null) comment.changeContent(requestDto.getContent());
-        comment.changeUpdatedAt();
 
         return CommentResponseDto.of(commentRepository.save(comment));
     }

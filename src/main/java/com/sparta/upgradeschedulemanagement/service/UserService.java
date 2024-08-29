@@ -80,7 +80,6 @@ public class UserService {
 
         if (requestDto.getName() != null) user.changeName(requestDto.getName());
         if (requestDto.getEmail() != null) user.changeEmail(requestDto.getEmail());
-        user.changeUpdatedAt();
 
         userRepository.save(user);
         return UserResponseDto.of(user);

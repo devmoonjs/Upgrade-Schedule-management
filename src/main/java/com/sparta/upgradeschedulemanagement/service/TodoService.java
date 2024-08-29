@@ -101,8 +101,6 @@ public class TodoService {
         if (requestDto.getTitle() != null) todo.changeTitle(requestDto.getTitle());
         if (requestDto.getContent() != null) todo.changContent(requestDto.getContent());
 
-        todo.changeUpdateAt();
-
         return TodoResponseDto.of(todo);
     }
 
