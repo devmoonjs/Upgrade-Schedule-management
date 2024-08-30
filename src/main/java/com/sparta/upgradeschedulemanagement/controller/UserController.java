@@ -19,13 +19,13 @@ public class UserController {
     private final UserService userService;
 
     // 유저 생성
-    @PostMapping("/users")
+    @PostMapping("/auth/signup")
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto requestDto, HttpServletResponse res) {
         return ResponseEntity.ok().body(userService.createUser(requestDto, res));
     }
 
     // 로그인
-    @PostMapping("/users/log-in")
+    @PostMapping("/auth/signin")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse servletResponse) {
         userService.login(requestDto, servletResponse);
         return ResponseEntity.ok().body("로그인 완료");
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     // 유저 삭제
-    @DeleteMapping("/users/{userId}")
+    @DeleteMapping("/admin/users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok().build();

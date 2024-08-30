@@ -13,7 +13,7 @@ public class UserResponseDto {
     private final String name;
     private final String email;
     private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private final LocalDateTime modifiedAt;
 
     public static UserResponseDto of(User user) {
         return new UserResponseDto(

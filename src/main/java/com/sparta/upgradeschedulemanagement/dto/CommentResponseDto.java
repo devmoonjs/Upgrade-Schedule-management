@@ -12,7 +12,7 @@ public class CommentResponseDto {
     private final Long commentId;
     private final String content;
     private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private final LocalDateTime modifiedAt;
     private final Long todoId;
 
     public static CommentResponseDto of(Comment comment) {

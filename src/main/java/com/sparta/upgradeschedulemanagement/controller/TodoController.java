@@ -38,7 +38,7 @@ public class TodoController {
     // 일정 전체 조회
     @GetMapping("/todos")
     public ResponseEntity<List<TodoResponseDto>> getTodoList(
-            @PageableDefault(page = 0, size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(page = 0, size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(todoService.getTodoList(pageable));
     }
 
