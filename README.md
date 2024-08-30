@@ -6,7 +6,7 @@
 
 ## ERD
 
-<p align="center"><img src = "erd.png" alt="erd"></p>
+<p align="center"><img src = "erd2.png" alt="erd"></p>
 
 ## API 명세 표
 
